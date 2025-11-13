@@ -1,24 +1,26 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import PrimeVue from 'primevue/config'
-import Aura from '@primevue/themes/aura'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import PrimeVue from 'primevue/config';
 
-// Sadece PrimeIcons CSS'i import edin
-import 'primeicons/primeicons.css'
+// Tema presetlerini import et
+import Aura from '@primevue/themes/aura'; // Light tema örneği
 
-const app = createApp(App)
+// PrimeIcons
+import 'primeicons/primeicons.css';
 
-app.use(router)
+const app = createApp(App);
+
+app.use(router);
 app.use(PrimeVue, {
   theme: {
-    preset: Aura,
+    preset: Aura, // Light tema
     options: {
       prefix: 'p',
-      darkModeSelector: 'system',
+      darkModeSelector: false, // Dark mod kullanmayacağız
       cssLayer: false
     }
   }
-})
+});
 
-app.mount('#app')
+app.mount('#app');

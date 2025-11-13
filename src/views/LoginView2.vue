@@ -68,7 +68,7 @@ const password = ref("");
 
 const handleLogin = () => {
   console.log("Giriş yapılıyor");
-  router.push("/login2");
+  router.push("/about");
 };
 </script>
 
@@ -78,10 +78,8 @@ const handleLogin = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
-  background-image: url("/src/assets/e.jpg");
-  background-size: cover;
-  background-position: center;
+
+  background-color: whitesmoke;
 }
 
 .login-card {

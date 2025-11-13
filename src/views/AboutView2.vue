@@ -1,16 +1,16 @@
 <template>
   <div class="layout-container">
+    <!-- Toggle Button - Sidebar dışında, her zaman görünür -->
+    <Button
+      :icon="isOpen ? 'pi pi-times' : 'pi pi-bars'"
+      class="toggle-btn"
+      @click="toggleSidebar"
+      rounded
+      severity="secondary"
+    />
+
     <!-- Sidebar -->
     <div class="sidebar" :class="{ 'sidebar-collapsed': !isOpen }">
-      <!-- Toggle Button -->
-      <Button
-        :icon="isOpen ? 'pi pi-times' : 'pi pi-bars'"
-        class="toggle-btn"
-        @click="toggleSidebar"
-        rounded
-        severity="secondary"
-      />
-
       <!-- 🔍 Search Box -->
       <div v-if="isOpen" class="menu-search">
         <InputText
@@ -66,7 +66,7 @@
     <!-- Main Content -->
     <div class="main-content">
       <div class="topbar">
-        <h1 class="title">Hoşgeldiniz Tolga Küçükaşçı</h1>
+        <h1 class="title">Hoşgeldiniz Tolga Küçükaşçı a</h1>
 
         <div class="topbar-actions">
           <!-- Logout -->
@@ -119,8 +119,32 @@
           <h4>7</h4>
         </div>
       </div>
+      <h2>Kullanıcı Listesi</h2>
+      <div class="buttons-row">
+        <Button
+          class="top-container-top-row-button"
+          @click="goToAbout2"
+          icon="pi pi-refresh"
+        /><Button
+          class="top-container-top-row-button"
+          @click="goToAbout2"
+          icon="pi pi-eraser"
+        /><Button
+          class="top-container-top-row-button"
+          @click="goToAbout2"
+          icon="pi pi-info-circle"
+        /><Button
+          class="top-container-top-row-button"
+          @click="goToAbout2"
+          icon="pi pi-microchip-ai"
+        />
+        <Button
+          class="top-container-top-row-button"
+          @click="goToAbout2"
+          icon="pi pi-arrow-circle-down"
+        />
+      </div>
       <div>
-        <h2>Kullanıcı Listesi</h2>
         <DataTable
           v-model:selection="selectedUser"
           :value="users"
@@ -165,7 +189,7 @@ const handleLogOut = () => {
 };
 const goToAbout2 = () => {
   console.log("Çıkış yapılıyor");
-  router.push("/about2");
+  router.push("/");
 };
 
 const isOpen = ref(true);
@@ -266,6 +290,8 @@ const users = ref([
   { id: 16, name: "Elif", email: "elif@example.com" },
 ]);
 
+const selectedUser = ref(null);
+
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
 };
@@ -310,6 +336,18 @@ const filteredMenus = computed(() => {
   background: var(--p-surface-ground);
   color: var(--p-text-color);
   transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Toggle Button - Sidebar DIŞINDA */
+.toggle-btn {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1002;
+  background-color: rgb(219, 234, 254);
+  color: rgb(92, 148, 254);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar {
@@ -327,28 +365,23 @@ const filteredMenus = computed(() => {
   width: 72px;
 }
 
-.toggle-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1em;
-  z-index: 10;
-  transition: all 0.3s ease;
-}
 .menu-search {
-  padding-top: 4.2rem;
+  padding-top: 4rem;
   padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
   display: flex;
   border-bottom: 1px solid var(--p-surface-border);
 }
 
-.sidebar-collapsed .toggle-btn {
-  right: 50%;
-  transform: translateX(50%);
+.search-input {
+  width: 100%;
 }
 
 .menu-list {
   padding: 0.5rem;
   overflow-y: auto;
+  flex: 1;
 }
 
 .menu-item-wrapper {
@@ -452,6 +485,27 @@ const filteredMenus = computed(() => {
   gap: 0.75rem;
 }
 
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  gap: 0.6rem;
+}
+
+.top-container-top-row-button {
+  display: flex;
+  height: 2.2rem;
+  width: 2.6rem;
+}
+
+:deep(.top-container-top-row-button:hover) {
+  background-color: rgb(3, 38, 3) !important;
+  border-color: rgb(3, 38, 3) !important;
+  transform: scale(1.1);
+}
+
 .top-row {
   display: flex;
   flex-wrap: wrap;
@@ -526,51 +580,48 @@ const filteredMenus = computed(() => {
   width: 100%;
 }
 
+/* Mobil Responsive */
 @media (max-width: 768px) {
   .toggle-btn {
     position: fixed !important;
-    bottom: 1.5rem;
-    left: 9%;
-    background-color: rgb(219, 234, 254);
-    color: rgb(92, 148, 254);
-    top: 3%;
-    transform: translateX(-50%); /* tam ortalama */
-    z-index: 1001;
-  }
-
-  .toggle-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1em;
-    z-index: 10;
-    transition: all 0.3s ease;
+    top: 1rem !important;
+    left: 1rem !important;
+    z-index: 1002 !important;
   }
 
   .sidebar {
-    position: absolute;
-    z-index: 1000;
+    position: fixed;
+    left: 0;
+    top: 0;
     background-color: white;
-    height: 100%;
+    height: 100vh;
+    width: 280px;
+    z-index: 1000;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
   }
 
+  .menu-search {
+    margin-top: 1rem;
+  }
   .sidebar-collapsed {
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .title {
-    display: flex;
-    font-size: 1.25rem;
-    margin: 3.5rem 0rem 0rem 0rem;
-  }
-
-  .logout-btn {
-    margin: 3.5rem 0rem 0rem 0rem;
+    transform: translateX(-100%);
+    width: 280px;
   }
 
   .main-content {
     padding: 1rem;
+    padding-top: 4rem;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .top-container {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 150px;
   }
 }
 

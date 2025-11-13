@@ -122,28 +122,16 @@
       <div>
         <h2>Kullanıcı Listesi</h2>
         <DataTable
-          v-model:selection="selectedUser"
           :value="users"
-          selection-mode="single"
-          data-key="id"
           :paginator="true"
           :rows="10"
           :responsive-layout="'scroll'"
         >
-          <Column selectionMode="single" headerStyle="width: 3rem"></Column>
           <Column field="id" header="ID"></Column>
           <Column field="name" header="İsim"></Column>
           <Column field="email" header="E-posta"></Column>
         </DataTable>
-
-        <p v-if="selectedUser">Seçilen kullanıcı: {{ selectedUser.name }}</p>
       </div>
-      <Button
-        label="Kayıtları Sorgula"
-        class="goto-button"
-        @click="goToAbout2"
-        icon="pi pi-sign-in"
-      />
     </div>
   </div>
 </template>
@@ -162,10 +150,6 @@ const router = useRouter();
 const handleLogOut = () => {
   console.log("Çıkış yapılıyor");
   router.push("/");
-};
-const goToAbout2 = () => {
-  console.log("Çıkış yapılıyor");
-  router.push("/about2");
 };
 
 const isOpen = ref(true);
@@ -252,18 +236,6 @@ const users = ref([
   { id: 2, name: "Ayşe", email: "ayse@example.com" },
   { id: 3, name: "Mehmet", email: "mehmet@example.com" },
   { id: 4, name: "Elif", email: "elif@example.com" },
-  { id: 5, name: "Tolga", email: "tolga@example.com" },
-  { id: 6, name: "Ayşe", email: "ayse@example.com" },
-  { id: 7, name: "Mehmet", email: "mehmet@example.com" },
-  { id: 8, name: "Elif", email: "elif@example.com" },
-  { id: 9, name: "Tolga", email: "tolga@example.com" },
-  { id: 10, name: "Ayşe", email: "ayse@example.com" },
-  { id: 11, name: "Mehmet", email: "mehmet@example.com" },
-  { id: 12, name: "Elif", email: "elif@example.com" },
-  { id: 13, name: "Tolga", email: "tolga@example.com" },
-  { id: 14, name: "Ayşe", email: "ayse@example.com" },
-  { id: 15, name: "Mehmet", email: "mehmet@example.com" },
-  { id: 16, name: "Elif", email: "elif@example.com" },
 ]);
 
 const toggleSidebar = () => {
@@ -309,18 +281,16 @@ const filteredMenus = computed(() => {
   min-height: 100vh;
   background: var(--p-surface-ground);
   color: var(--p-text-color);
-  transition: all 0.3s ease;
 }
 
 .sidebar {
   width: 256px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  transition: width 0.3s ease;
   background: var(--p-surface-card);
   border-right: 1px solid var(--p-surface-border);
   box-shadow: var(--p-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
 }
 
 .sidebar-collapsed {
@@ -330,29 +300,23 @@ const filteredMenus = computed(() => {
 .toggle-btn {
   position: absolute;
   top: 1rem;
-  right: 1em;
-  z-index: 10;
-  transition: all 0.3s ease;
+  right: 1rem;
 }
+
 .menu-search {
-  padding-top: 4.2rem;
-  padding-left: 1rem;
-  display: flex;
+  padding: 1rem;
   border-bottom: 1px solid var(--p-surface-border);
 }
 
-.sidebar-collapsed .toggle-btn {
-  right: 50%;
-  transform: translateX(50%);
+.search-input {
+  width: 100%;
+  padding: 0.5rem;
 }
 
 .menu-list {
+  margin-top: 0.5rem;
   padding: 0.5rem;
   overflow-y: auto;
-}
-
-.menu-item-wrapper {
-  margin-bottom: 0.5rem;
 }
 
 .menu-item {
@@ -360,11 +324,9 @@ const filteredMenus = computed(() => {
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  border-radius: var(--p-border-radius);
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-weight: 500;
-  color: var(--p-text-color);
 }
 
 .menu-item:hover {
@@ -379,30 +341,19 @@ const filteredMenus = computed(() => {
 }
 
 .menu-icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 .menu-label {
   font-size: 1rem;
-  letter-spacing: 0.025em;
-}
-
-.submenu-icon {
-  font-size: 0.875rem;
-  opacity: 0.7;
 }
 
 .submenu {
-  padding-left: 3rem;
-  margin-top: 0.25rem;
+  padding-left: 2rem;
 }
 
 .submenu-item {
   padding: 0.5rem;
-  border-radius: var(--p-border-radius);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
   color: var(--p-text-muted-color);
 }
 
@@ -411,172 +362,21 @@ const filteredMenus = computed(() => {
   color: var(--p-text-color);
 }
 
-.submenu-enter-active,
-.submenu-leave-active {
-  transition: all 0.2s ease;
-}
-
-.submenu-enter-from,
-.submenu-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
 .main-content {
   flex: 1;
   padding: 2rem;
   background: whitesmoke;
-  transition: all 0.3s ease;
 }
 
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
 }
 
 .title {
   font-size: 1.875rem;
   font-weight: bold;
-  margin: 0;
   color: var(--p-primary-color);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.top-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.top-container {
-  background: white;
-  padding: 1.5rem 0.7rem;
-  display: flex;
-  flex-direction: column;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  flex: 1 1 calc(25% - 0.75rem);
-  min-width: 200px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.top-container:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.top-container-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.top-container-row h4 {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 300;
-  color: rgb(100, 116, 140);
-}
-
-.top-container-icon-container {
-  background-color: rgb(219, 234, 254);
-  color: rgb(92, 148, 254);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.4em;
-  border-radius: 30%;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.top-container-icon-container:hover {
-  background-color: blue;
-  transform: scale(1.1);
-}
-
-.top-container h4:last-child {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: black;
-  text-align: start;
-}
-
-.goto-button {
-  margin-top: 1rem;
-  height: 40px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 16px;
-  color: white;
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  .toggle-btn {
-    position: fixed !important;
-    bottom: 1.5rem;
-    left: 9%;
-    background-color: rgb(219, 234, 254);
-    color: rgb(92, 148, 254);
-    top: 3%;
-    transform: translateX(-50%); /* tam ortalama */
-    z-index: 1001;
-  }
-
-  .toggle-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1em;
-    z-index: 10;
-    transition: all 0.3s ease;
-  }
-
-  .sidebar {
-    position: absolute;
-    z-index: 1000;
-    background-color: white;
-    height: 100%;
-  }
-
-  .sidebar-collapsed {
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .title {
-    display: flex;
-    font-size: 1.25rem;
-    margin: 3.5rem 0rem 0rem 0rem;
-  }
-
-  .logout-btn {
-    margin: 3.5rem 0rem 0rem 0rem;
-  }
-
-  .main-content {
-    padding: 1rem;
-  }
-}
-
-* {
-  transition-property: background-color, border-color, color, box-shadow;
-  transition-duration: 0.3s;
-  transition-timing-function: ease;
 }
 </style>
