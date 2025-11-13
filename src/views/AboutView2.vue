@@ -1,6 +1,6 @@
 <template>
   <div class="layout-container">
-    <!-- Toggle Button - Sidebar dışında, her zaman görünür -->
+    <!-- Toggle Button -->
     <Button
       :icon="isOpen ? 'pi pi-times' : 'pi pi-bars'"
       class="toggle-btn"
@@ -11,7 +11,7 @@
 
     <!-- Sidebar -->
     <div class="sidebar" :class="{ 'sidebar-collapsed': !isOpen }">
-      <!-- 🔍 Search Box -->
+      <!-- Search Box -->
       <div v-if="isOpen" class="menu-search">
         <InputText
           v-model="searchQuery"
@@ -66,9 +66,33 @@
     <!-- Main Content -->
     <div class="main-content">
       <div class="topbar">
-        <h1 class="title">Hoşgeldiniz Tolga Küçükaşçı a</h1>
+        <h1 class="title">Hoşgeldiniz Tolga Küçükaşçı</h1>
 
         <div class="topbar-actions">
+          <!-- Theme Selector -->
+          <Select
+            v-model="selectedTheme"
+            :options="themes"
+            optionLabel="name"
+            placeholder="Tema Seçin"
+            class="theme-selector"
+            @change="changeTheme"
+          >
+            <template #value="slotProps">
+              <div v-if="slotProps.value" class="theme-item">
+                <i :class="slotProps.value.icon" class="theme-icon"></i>
+                <span>{{ slotProps.value.name }}</span>
+              </div>
+              <span v-else>Tema Seçin</span>
+            </template>
+            <template #option="slotProps">
+              <div class="theme-item">
+                <i :class="slotProps.option.icon" class="theme-icon"></i>
+                <span>{{ slotProps.option.name }}</span>
+              </div>
+            </template>
+          </Select>
+
           <!-- Logout -->
           <Button
             icon="pi pi-sign-out"
@@ -119,31 +143,38 @@
           <h4>7</h4>
         </div>
       </div>
-      <h2>Kullanıcı Listesi</h2>
-      <div class="buttons-row">
-        <Button
-          class="top-container-top-row-button"
-          @click="goToAbout2"
-          icon="pi pi-refresh"
-        /><Button
-          class="top-container-top-row-button"
-          @click="goToAbout2"
-          icon="pi pi-eraser"
-        /><Button
-          class="top-container-top-row-button"
-          @click="goToAbout2"
-          icon="pi pi-info-circle"
-        /><Button
-          class="top-container-top-row-button"
-          @click="goToAbout2"
-          icon="pi pi-microchip-ai"
-        />
-        <Button
-          class="top-container-top-row-button"
-          @click="goToAbout2"
-          icon="pi pi-arrow-circle-down"
-        />
+      <div class="title-and-buttons-row">
+        <h2 class="subtitle">Kullanıcı Listesi</h2>
+
+        <div class="buttons-row">
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-refresh"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-eraser"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-info-circle"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-microchip-ai"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-arrow-circle-down"
+          />
+        </div>
       </div>
+
       <div>
         <DataTable
           v-model:selection="selectedUser"
@@ -162,6 +193,7 @@
 
         <p v-if="selectedUser">Seçilen kullanıcı: {{ selectedUser.name }}</p>
       </div>
+
       <Button
         label="Kayıtları Sorgula"
         class="goto-button"
@@ -173,22 +205,122 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Button from "primevue/button";
 import Divider from "primevue/divider";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
+import Select from "primevue/select";
+import { usePrimeVue } from "primevue/config";
+
+// ✅ PrimeVue v4 için tema preset'lerini import edin
+import Aura from "@primevue/themes/aura";
+import Lara from "@primevue/themes/lara";
+import Nora from "@primevue/themes/nora";
 
 const router = useRouter();
+const $primevue = usePrimeVue();
+
+// ✅ PrimeVue v4 için tema tanımları
+const themes = ref([
+  {
+    name: "Aura Light",
+    value: "aura-light",
+    preset: Aura,
+    darkMode: false,
+    icon: "pi pi-sun",
+  },
+  {
+    name: "Aura Dark",
+    value: "aura-dark",
+    preset: Aura,
+    darkMode: true,
+    icon: "pi pi-moon",
+  },
+  {
+    name: "Lara Light",
+    value: "lara-light",
+    preset: Lara,
+    darkMode: false,
+    icon: "pi pi-palette",
+  },
+  {
+    name: "Lara Dark",
+    value: "lara-dark",
+    preset: Lara,
+    darkMode: true,
+    icon: "pi pi-circle-fill",
+  },
+  {
+    name: "Nora Light",
+    value: "nora-light",
+    preset: Nora,
+    darkMode: false,
+    icon: "pi pi-sparkles",
+  },
+  {
+    name: "Nora Dark",
+    value: "nora-dark",
+    preset: Nora,
+    darkMode: true,
+    icon: "pi pi-star-fill",
+  },
+]);
+
+const selectedTheme = ref(null);
+
+// ✅ PrimeVue v4 için DOĞRU tema değiştirme
+const changeTheme = () => {
+  if (!selectedTheme.value) return;
+
+  const theme = selectedTheme.value;
+
+  // PrimeVue config'i güncelle
+  $primevue.config.theme.preset = theme.preset;
+
+  // Dark mode kontrolü
+  const root = document.documentElement;
+
+  if (theme.darkMode) {
+    root.classList.add("dark-mode");
+  } else {
+    root.classList.remove("dark-mode");
+  }
+
+  // localStorage'a kaydet
+  localStorage.setItem("userTheme", theme.value);
+
+  console.log(`✅ Tema değiştirildi: ${theme.name}`);
+  console.log(`Preset:`, theme.preset);
+  console.log(`Dark Mode:`, theme.darkMode);
+};
+
+// ✅ Sayfa yüklendiğinde tema yükle
+onMounted(() => {
+  const savedTheme = localStorage.getItem("userTheme");
+
+  if (savedTheme) {
+    const theme = themes.value.find((t) => t.value === savedTheme);
+    if (theme) {
+      selectedTheme.value = theme;
+      changeTheme();
+    }
+  } else {
+    // Varsayılan tema
+    selectedTheme.value = themes.value[0];
+    changeTheme();
+  }
+});
 
 const handleLogOut = () => {
   console.log("Çıkış yapılıyor");
   router.push("/");
 };
+
 const goToAbout2 = () => {
-  console.log("Çıkış yapılıyor");
+  console.log("Sayfa yenileniyor");
   router.push("/");
 };
 
@@ -304,7 +436,6 @@ const toggleMenu = (menuLabel) => {
   }
 };
 
-// 🔍 Menü Filtreleme
 const filteredMenus = computed(() => {
   if (!searchQuery.value) return menus;
 
@@ -339,15 +470,19 @@ const filteredMenus = computed(() => {
   position: relative;
 }
 
-/* Toggle Button - Sidebar DIŞINDA */
 .toggle-btn {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: 0.75rem;
+  left: 0.75rem;
   z-index: 1002;
-  background-color: rgb(219, 234, 254);
-  color: rgb(92, 148, 254);
+  background-color: var(--p-highlight-bg);
+  color: var(--p-highlight-text-color);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Toggle butonu hover durumunu temaya bağlama */
+.toggle-btn:hover {
+  background-color: var(--p-highlight-bg-hover);
 }
 
 .sidebar {
@@ -356,6 +491,7 @@ const filteredMenus = computed(() => {
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
+  /* Değişkenler zaten doğru kullanılıyordu */
   background: var(--p-surface-card);
   border-right: 1px solid var(--p-surface-border);
   box-shadow: var(--p-shadow-sm);
@@ -381,6 +517,7 @@ const filteredMenus = computed(() => {
 .menu-list {
   padding: 0.5rem;
   overflow-y: auto;
+  margin-top: rem;
   flex: 1;
 }
 
@@ -402,7 +539,7 @@ const filteredMenus = computed(() => {
 
 .menu-item:hover {
   background: var(--p-highlight-bg);
-  color: var(--p-highlight-color);
+  color: var(--p-highlight-text-color);
 }
 
 .menu-item-content {
@@ -436,7 +573,8 @@ const filteredMenus = computed(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
-  color: var(--p-text-muted-color);
+  /* İkincil metin rengi için değişken kullanıldı */
+  color: var(--p-text-color-secondary);
 }
 
 .submenu-item:hover {
@@ -458,7 +596,8 @@ const filteredMenus = computed(() => {
 .main-content {
   flex: 1;
   padding: 2rem;
-  background: whitesmoke;
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'whitesmoke' yerine 'surface-ground' */
+  background: var(--p-surface-ground);
   transition: all 0.3s ease;
 }
 
@@ -478,11 +617,31 @@ const filteredMenus = computed(() => {
   color: var(--p-primary-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1;
+  color: var(--p-primary-color);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 .topbar-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.theme-selector {
+  min-width: 160px;
+}
+
+.theme-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-icon {
+  font-size: 1rem;
 }
 
 .buttons-row {
@@ -498,12 +657,17 @@ const filteredMenus = computed(() => {
   display: flex;
   height: 2.2rem;
   width: 2.6rem;
+  color: var(--p-primary-color-50);
 }
 
+.title-and-buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 :deep(.top-container-top-row-button:hover) {
-  background-color: rgb(3, 38, 3) !important;
-  border-color: rgb(3, 38, 3) !important;
-  transform: scale(1.1);
+  border-color: var(--p-highlight-bg-hover) !important;
+  transform: scale(1.2);
 }
 
 .top-row {
@@ -513,7 +677,8 @@ const filteredMenus = computed(() => {
 }
 
 .top-container {
-  background: white;
+  background: var(--p-surface-card);
+  border: 0.1px solid white;
   padding: 1.5rem 0.7rem;
   display: flex;
   flex-direction: column;
@@ -541,12 +706,14 @@ const filteredMenus = computed(() => {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 300;
-  color: rgb(100, 116, 140);
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'rgb(...)' yerine 'text-color-secondary' */
+  color: var(--p-text-color-secondary);
 }
 
 .top-container-icon-container {
-  background-color: rgb(219, 234, 254);
-  color: rgb(92, 148, 254);
+  /* SABİT RENKLER DEĞİŞTİRİLDİ: Daha iyi bir tema deseni için 'primary' renkleri kullanıldı */
+  background-color: var(--p-primary-subtle-bg);
+  color: var(--p-primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -558,7 +725,9 @@ const filteredMenus = computed(() => {
 }
 
 .top-container-icon-container:hover {
-  background-color: blue;
+  /* SABİT RENKLER DEĞİŞTİRİLDİ: 'blue' yerine 'primary-color' */
+  background-color: var(--p-primary-color);
+  color: var(--p-primary-color-text); /* Ana renk üzerinde zıt metin rengi */
   transform: scale(1.1);
 }
 
@@ -566,7 +735,8 @@ const filteredMenus = computed(() => {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 500;
-  color: black;
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'black' yerine 'text-color' */
+  color: var(--p-text-color);
   text-align: start;
 }
 
@@ -576,11 +746,12 @@ const filteredMenus = computed(() => {
   font-size: 1rem;
   border: none;
   border-radius: 16px;
-  color: white;
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'white' yerine 'primary-color-text' */
+  color: var(--p-primary-color-text);
+  /* Not: Arka plan rengi, PrimeVue teması tarafından (.p-button) otomatik olarak atanacaktır. */
   width: 100%;
 }
 
-/* Mobil Responsive */
 @media (max-width: 768px) {
   .toggle-btn {
     position: fixed !important;
@@ -593,7 +764,8 @@ const filteredMenus = computed(() => {
     position: fixed;
     left: 0;
     top: 0;
-    background-color: white;
+    /* SABİT RENK DEĞİŞTİRİLDİ: 'white' yerine 'surface-card' */
+    background-color: var(--p-surface-card);
     height: 100vh;
     width: 280px;
     z-index: 1000;
@@ -604,6 +776,7 @@ const filteredMenus = computed(() => {
   .menu-search {
     margin-top: 1rem;
   }
+
   .sidebar-collapsed {
     transform: translateX(-100%);
     width: 280px;
@@ -622,6 +795,10 @@ const filteredMenus = computed(() => {
   .top-container {
     flex: 1 1 calc(50% - 0.5rem);
     min-width: 150px;
+  }
+
+  .theme-selector {
+    min-width: 120px;
   }
 }
 

@@ -1,26 +1,27 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import router from './router';
-import PrimeVue from 'primevue/config';
+// main.js - PrimeVue v4 için DOĞRU kurulum
 
-// Tema presetlerini import et
-import Aura from '@primevue/themes/aura'; // Light tema örneği
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import PrimeVue from 'primevue/config'
+import Aura from '@primevue/themes/aura'
 
-// PrimeIcons
-import 'primeicons/primeicons.css';
+// ✅ Sadece PrimeIcons CSS'ini import edin
+import 'primeicons/primeicons.css'
 
-const app = createApp(App);
+const app = createApp(App)
 
-app.use(router);
+app.use(router)
+
+// ✅ PrimeVue v4 konfigürasyonu
 app.use(PrimeVue, {
   theme: {
-    preset: Aura, // Light tema
+    preset: Aura,  // Varsayılan tema
     options: {
-      prefix: 'p',
-      darkModeSelector: false, // Dark mod kullanmayacağız
+      darkModeSelector: '.dark-mode',  // Dark mode için class
       cssLayer: false
     }
   }
-});
+})
 
-app.mount('#app');
+app.mount('#app')
