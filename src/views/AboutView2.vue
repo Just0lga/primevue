@@ -2,6 +2,7 @@
   <div class="layout-container">
     <!-- Toggle Button -->
     <Button
+      v-if="!isOpen"
       :icon="isOpen ? 'pi pi-times' : 'pi pi-bars'"
       class="toggle-btn"
       @click="toggleSidebar"
@@ -64,7 +65,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content" @click="handleMainContentClick">
       <div class="topbar">
         <h1 class="title">Hoşgeldiniz Tolga Küçükaşçı</h1>
 
@@ -239,38 +240,13 @@ const themes = ref([
     darkMode: true,
     icon: "pi pi-moon",
   },
-  {
-    name: "Lara Light",
-    value: "lara-light",
-    preset: Lara,
-    darkMode: false,
-    icon: "pi pi-palette",
-  },
-  {
-    name: "Lara Dark",
-    value: "lara-dark",
-    preset: Lara,
-    darkMode: true,
-    icon: "pi pi-circle-fill",
-  },
-  {
-    name: "Nora Light",
-    value: "nora-light",
-    preset: Nora,
-    darkMode: false,
-    icon: "pi pi-sparkles",
-  },
-  {
-    name: "Nora Dark",
-    value: "nora-dark",
-    preset: Nora,
-    darkMode: true,
-    icon: "pi pi-star-fill",
-  },
 ]);
 
 const selectedTheme = ref(null);
 
+const handleMainContentClick = () => {
+  isOpen.value = false;
+};
 // ✅ PrimeVue v4 için DOĞRU tema değiştirme
 const changeTheme = () => {
   if (!selectedTheme.value) return;
@@ -491,6 +467,7 @@ const filteredMenus = computed(() => {
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
+  padding-top: 3rem;
   /* Değişkenler zaten doğru kullanılıyordu */
   background: var(--p-surface-card);
   border-right: 1px solid var(--p-surface-border);
@@ -502,10 +479,8 @@ const filteredMenus = computed(() => {
 }
 
 .menu-search {
-  padding-top: 4rem;
   padding-left: 1rem;
   padding-right: 1rem;
-  padding-bottom: 1rem;
   display: flex;
   border-bottom: 1px solid var(--p-surface-border);
 }
@@ -657,7 +632,7 @@ const filteredMenus = computed(() => {
   display: flex;
   height: 2.2rem;
   width: 2.6rem;
-  color: var(--p-primary-color-50);
+  color: var(--p-primary-color);
 }
 
 .title-and-buttons-row {
@@ -760,17 +735,21 @@ const filteredMenus = computed(() => {
     z-index: 1002 !important;
   }
 
-  .sidebar {
+  :deep(.sidebar) {
     position: fixed;
     left: 0;
     top: 0;
-    /* SABİT RENK DEĞİŞTİRİLDİ: 'white' yerine 'surface-card' */
-    background-color: var(--p-surface-card);
+    background-color: var(--p-surface-950) !important;
     height: 100vh;
     width: 280px;
-    z-index: 1000;
+    z-index: 2010;
     transform: translateX(0);
     transition: transform 0.3s ease;
+  }
+
+  :deep(.sidebar *) {
+    color: white !important;
+    background-color: var(--p-surface-ground);
   }
 
   .menu-search {
