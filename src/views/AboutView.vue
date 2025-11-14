@@ -698,9 +698,8 @@ const filteredMenus = computed(() => {
 }
 
 .top-container-icon-container:hover {
-  /* SABİT RENKLER DEĞİŞTİRİLDİ: 'blue' yerine 'primary-color' */
   background-color: var(--p-primary-color);
-  color: var(--p-primary-color-text); /* Ana renk üzerinde zıt metin rengi */
+  color: var(--p-primary-color-text);
   transform: scale(1.1);
 }
 
