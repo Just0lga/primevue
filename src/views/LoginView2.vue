@@ -89,6 +89,7 @@ const handleLogin = () => {
   backdrop-filter: blur(40px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
+  margin: 5rem;
 }
 
 .logo-section {
@@ -132,7 +133,7 @@ const handleLogin = () => {
   background-color: rgba(255, 255, 255, 0);
   color: #004456;
   border: 0.5px solid #004456;
-  border-radius: 16px;
+  border-radius: 8px;
   width: 100%;
   height: 40px;
   padding: 0 12px;
@@ -164,7 +165,7 @@ const handleLogin = () => {
   font-size: 1rem;
   background-color: #004456;
   border: none;
-  border-radius: 16px;
+  border-radius: 8px;
   color: white;
   width: 100%;
 }
@@ -193,7 +194,13 @@ const handleLogin = () => {
 
 @media (max-width: 768px) {
   .login-card {
-    max-width: 100%;
+    width: 100%;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(40px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    margin: 1rem;
   }
 
   .welcome-text {

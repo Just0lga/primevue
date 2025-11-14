@@ -134,7 +134,7 @@ const handleLogin = () => {
   background-color: rgba(255, 255, 255, 0);
   color: #004456;
   border: 0.5px solid #004456;
-  border-radius: 16px;
+  border-radius: 8px;
   width: 100%;
   height: 40px;
   padding: 0 12px;
@@ -166,7 +166,7 @@ const handleLogin = () => {
   font-size: 1rem;
   background-color: #004456;
   border: none;
-  border-radius: 16px;
+  border-radius: 8px;
   color: white;
   width: 100%;
 }

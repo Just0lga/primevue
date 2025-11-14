@@ -1,17 +1,18 @@
 <template>
   <div class="layout-container">
+    <!-- Toggle Button -->
+    <Button
+      v-if="!isOpen"
+      :icon="isOpen ? 'pi pi-times' : 'pi pi-bars'"
+      class="toggle-btn"
+      @click="toggleSidebar"
+      rounded
+      severity="secondary"
+    />
+
     <!-- Sidebar -->
     <div class="sidebar" :class="{ 'sidebar-collapsed': !isOpen }">
-      <!-- Toggle Button -->
-      <Button
-        :icon="isOpen ? 'pi pi-times' : 'pi pi-bars'"
-        class="toggle-btn"
-        @click="toggleSidebar"
-        rounded
-        severity="secondary"
-      />
-
-      <!-- 🔍 Search Box -->
+      <!-- Search Box -->
       <div v-if="isOpen" class="menu-search">
         <InputText
           v-model="searchQuery"
@@ -64,11 +65,35 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content" @click="handleMainContentClick">
       <div class="topbar">
         <h1 class="title">Hoşgeldiniz Tolga Küçükaşçı</h1>
 
         <div class="topbar-actions">
+          <!-- Theme Selector -->
+          <Select
+            v-model="selectedTheme"
+            :options="themes"
+            optionLabel="name"
+            placeholder="Tema Seçin"
+            class="theme-selector"
+            @change="changeTheme"
+          >
+            <template #value="slotProps">
+              <div v-if="slotProps.value" class="theme-item">
+                <i :class="slotProps.value.icon" class="theme-icon"></i>
+                <span>{{ slotProps.value.name }}</span>
+              </div>
+              <span v-else>Tema Seçin</span>
+            </template>
+            <template #option="slotProps">
+              <div class="theme-item">
+                <i :class="slotProps.option.icon" class="theme-icon"></i>
+                <span>{{ slotProps.option.name }}</span>
+              </div>
+            </template>
+          </Select>
+
           <!-- Logout -->
           <Button
             icon="pi pi-sign-out"
@@ -119,8 +144,39 @@
           <h4>7</h4>
         </div>
       </div>
+      <div class="title-and-buttons-row">
+        <h2 class="subtitle">Kullanıcı Listesi</h2>
+
+        <div class="buttons-row">
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-refresh"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-eraser"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-info-circle"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-microchip-ai"
+          />
+          <Button
+            class="top-container-top-row-button"
+            @click="goToAbout2"
+            icon="pi pi-arrow-circle-down"
+          />
+        </div>
+      </div>
+
       <div>
-        <h2>Kullanıcı Listesi</h2>
         <DataTable
           v-model:selection="selectedUser"
           :value="users"
@@ -138,6 +194,7 @@
 
         <p v-if="selectedUser">Seçilen kullanıcı: {{ selectedUser.name }}</p>
       </div>
+
       <Button
         label="Kayıtları Sorgula"
         class="goto-button"
@@ -149,26 +206,101 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import Button from "primevue/button";
 import Divider from "primevue/divider";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import InputText from "primevue/inputtext";
+import Select from "primevue/select";
+import { usePrimeVue } from "primevue/config";
+
+// ✅ PrimeVue v4 için tema preset'lerini import edin
+import Aura from "@primevue/themes/aura";
+import Lara from "@primevue/themes/lara";
+import Nora from "@primevue/themes/nora";
 
 const router = useRouter();
+const $primevue = usePrimeVue();
+
+// ✅ PrimeVue v4 için tema tanımları
+const themes = ref([
+  {
+    name: "Aura Light",
+    value: "aura-light",
+    preset: Aura,
+    darkMode: false,
+    icon: "pi pi-sun",
+  },
+  {
+    name: "Aura Dark",
+    value: "aura-dark",
+    preset: Aura,
+    darkMode: true,
+    icon: "pi pi-moon",
+  },
+]);
+
+const selectedTheme = ref(null);
+
+const handleMainContentClick = () => {
+  isOpen.value = false;
+};
+// ✅ PrimeVue v4 için DOĞRU tema değiştirme
+const changeTheme = () => {
+  if (!selectedTheme.value) return;
+
+  const theme = selectedTheme.value;
+
+  // PrimeVue config'i güncelle
+  $primevue.config.theme.preset = theme.preset;
+
+  // Dark mode kontrolü
+  const root = document.documentElement;
+
+  if (theme.darkMode) {
+    root.classList.add("dark-mode");
+  } else {
+    root.classList.remove("dark-mode");
+  }
+
+  // localStorage'a kaydet
+  localStorage.setItem("userTheme", theme.value);
+
+  console.log(`✅ Tema değiştirildi: ${theme.name}`);
+  console.log(`Preset:`, theme.preset);
+  console.log(`Dark Mode:`, theme.darkMode);
+};
+
+// ✅ Sayfa yüklendiğinde tema yükle
+onMounted(() => {
+  const savedTheme = localStorage.getItem("userTheme");
+
+  if (savedTheme) {
+    const theme = themes.value.find((t) => t.value === savedTheme);
+    if (theme) {
+      selectedTheme.value = theme;
+      changeTheme();
+    }
+  } else {
+    // Varsayılan tema
+    selectedTheme.value = themes.value[0];
+    changeTheme();
+  }
+});
 
 const handleLogOut = () => {
   console.log("Çıkış yapılıyor");
   router.push("/");
 };
+
 const goToAbout2 = () => {
-  console.log("Çıkış yapılıyor");
+  console.log("Sayfa yenileniyor");
   router.push("/about2");
 };
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 const openMenus = ref([]);
 const searchQuery = ref("");
 
@@ -266,6 +398,8 @@ const users = ref([
   { id: 16, name: "Elif", email: "elif@example.com" },
 ]);
 
+const selectedUser = ref(null);
+
 const toggleSidebar = () => {
   isOpen.value = !isOpen.value;
 };
@@ -278,7 +412,6 @@ const toggleMenu = (menuLabel) => {
   }
 };
 
-// 🔍 Menü Filtreleme
 const filteredMenus = computed(() => {
   if (!searchQuery.value) return menus;
 
@@ -310,6 +443,22 @@ const filteredMenus = computed(() => {
   background: var(--p-surface-ground);
   color: var(--p-text-color);
   transition: all 0.3s ease;
+  position: relative;
+}
+
+.toggle-btn {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 1002;
+  background-color: var(--p-highlight-bg);
+  color: var(--p-highlight-text-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Toggle butonu hover durumunu temaya bağlama */
+.toggle-btn:hover {
+  background-color: var(--p-highlight-bg-hover);
 }
 
 .sidebar {
@@ -318,6 +467,8 @@ const filteredMenus = computed(() => {
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
+  padding-top: 3rem;
+  /* Değişkenler zaten doğru kullanılıyordu */
   background: var(--p-surface-card);
   border-right: 1px solid var(--p-surface-border);
   box-shadow: var(--p-shadow-sm);
@@ -327,28 +478,22 @@ const filteredMenus = computed(() => {
   width: 72px;
 }
 
-.toggle-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1em;
-  z-index: 10;
-  transition: all 0.3s ease;
-}
 .menu-search {
-  padding-top: 4.2rem;
   padding-left: 1rem;
+  padding-right: 1rem;
   display: flex;
   border-bottom: 1px solid var(--p-surface-border);
 }
 
-.sidebar-collapsed .toggle-btn {
-  right: 50%;
-  transform: translateX(50%);
+.search-input {
+  width: 100%;
 }
 
 .menu-list {
   padding: 0.5rem;
   overflow-y: auto;
+  margin-top: rem;
+  flex: 1;
 }
 
 .menu-item-wrapper {
@@ -369,7 +514,7 @@ const filteredMenus = computed(() => {
 
 .menu-item:hover {
   background: var(--p-highlight-bg);
-  color: var(--p-highlight-color);
+  color: var(--p-highlight-text-color);
 }
 
 .menu-item-content {
@@ -403,7 +548,7 @@ const filteredMenus = computed(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
-  color: var(--p-text-muted-color);
+  color: var(--p-text-color-secondary);
 }
 
 .submenu-item:hover {
@@ -425,7 +570,8 @@ const filteredMenus = computed(() => {
 .main-content {
   flex: 1;
   padding: 2rem;
-  background: whitesmoke;
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'whitesmoke' yerine 'surface-ground' */
+  background: var(--p-surface-ground);
   transition: all 0.3s ease;
 }
 
@@ -445,11 +591,56 @@ const filteredMenus = computed(() => {
   color: var(--p-primary-color);
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
+.subtitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 1;
+  color: var(--p-primary-color);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 .topbar-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.theme-selector {
+  min-width: 160px;
+}
+
+.theme-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-icon {
+  font-size: 1rem;
+}
+
+.buttons-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  gap: 0.6rem;
+}
+
+.top-container-top-row-button {
+  display: flex;
+  height: 2.2rem;
+  width: 2.6rem;
+}
+
+.title-and-buttons-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+:deep(.top-container-top-row-button:hover) {
+  border-color: var(--p-highlight-bg-hover) !important;
+  transform: scale(1.2);
 }
 
 .top-row {
@@ -459,7 +650,8 @@ const filteredMenus = computed(() => {
 }
 
 .top-container {
-  background: white;
+  background: var(--p-surface-card);
+  border: 0.1px solid white;
   padding: 1.5rem 0.7rem;
   display: flex;
   flex-direction: column;
@@ -487,12 +679,14 @@ const filteredMenus = computed(() => {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 300;
-  color: rgb(100, 116, 140);
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'rgb(...)' yerine 'text-color-secondary' */
+  color: var(--p-text-color-secondary);
 }
 
 .top-container-icon-container {
-  background-color: rgb(219, 234, 254);
-  color: rgb(92, 148, 254);
+  /* SABİT RENKLER DEĞİŞTİRİLDİ: Daha iyi bir tema deseni için 'primary' renkleri kullanıldı */
+  background-color: var(--p-primary-subtle-bg);
+  color: var(--p-primary-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -504,7 +698,9 @@ const filteredMenus = computed(() => {
 }
 
 .top-container-icon-container:hover {
-  background-color: blue;
+  /* SABİT RENKLER DEĞİŞTİRİLDİ: 'blue' yerine 'primary-color' */
+  background-color: var(--p-primary-color);
+  color: var(--p-primary-color-text); /* Ana renk üzerinde zıt metin rengi */
   transform: scale(1.1);
 }
 
@@ -512,7 +708,8 @@ const filteredMenus = computed(() => {
   margin: 0;
   font-size: 0.9rem;
   font-weight: 500;
-  color: black;
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'black' yerine 'text-color' */
+  color: var(--p-text-color);
   text-align: start;
 }
 
@@ -522,55 +719,63 @@ const filteredMenus = computed(() => {
   font-size: 1rem;
   border: none;
   border-radius: 16px;
-  color: white;
+  /* SABİT RENK DEĞİŞTİRİLDİ: 'white' yerine 'primary-color-text' */
+  color: var(--p-primary-color-text);
+  /* Not: Arka plan rengi, PrimeVue teması tarafından (.p-button) otomatik olarak atanacaktır. */
   width: 100%;
 }
 
 @media (max-width: 768px) {
   .toggle-btn {
     position: fixed !important;
-    bottom: 1.5rem;
-    left: 9%;
-    background-color: rgb(219, 234, 254);
-    color: rgb(92, 148, 254);
-    top: 3%;
-    transform: translateX(-50%); /* tam ortalama */
-    z-index: 1001;
+    top: 1rem !important;
+    left: 1rem !important;
+    z-index: 1002 !important;
   }
 
-  .toggle-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1em;
-    z-index: 10;
-    transition: all 0.3s ease;
+  :deep(.sidebar) {
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: var(--p-surface-950) !important;
+    height: 100vh;
+    width: 280px;
+    z-index: 2010;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
   }
 
-  .sidebar {
-    position: absolute;
-    z-index: 1000;
-    background-color: white;
-    height: 100%;
+  :deep(.sidebar *) {
+    color: white !important;
+    background-color: var(--p-surface-ground);
+  }
+
+  .menu-search {
+    margin-top: 1rem;
   }
 
   .sidebar-collapsed {
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .title {
-    display: flex;
-    font-size: 1.25rem;
-    margin: 3.5rem 0rem 0rem 0rem;
-  }
-
-  .logout-btn {
-    margin: 3.5rem 0rem 0rem 0rem;
+    transform: translateX(-100%);
+    width: 280px;
   }
 
   .main-content {
     padding: 1rem;
+    padding-top: 4rem;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .top-container {
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 150px;
+  }
+
+  .theme-selector {
+    min-width: 120px;
   }
 }
 

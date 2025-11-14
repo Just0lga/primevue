@@ -300,7 +300,7 @@ const goToAbout2 = () => {
   router.push("/");
 };
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 const openMenus = ref([]);
 const searchQuery = ref("");
 
