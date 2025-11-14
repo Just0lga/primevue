@@ -632,7 +632,6 @@ const filteredMenus = computed(() => {
   display: flex;
   height: 2.2rem;
   width: 2.6rem;
-  color: var(--p-primary-color);
 }
 
 .title-and-buttons-row {
